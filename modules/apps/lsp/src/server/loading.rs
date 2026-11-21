@@ -320,7 +320,7 @@ impl Worker {
                 .map_err(|error| LspError::Project(error.to_string()))?;
             tracing::debug!(path = %path.display(), "added unsaved project source");
             loaded.root.source_files.push(SourceFile {
-                path: portable.clone(),
+                path: portable,
                 display_path: display_path.clone(),
                 script_candidate: candidate.to_owned(),
             });

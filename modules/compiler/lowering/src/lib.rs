@@ -126,8 +126,7 @@ pub fn lower_script(
         parent: source
             .parent
             .as_ref()
-            .map(|name| name.text.clone())
-            .unwrap_or_default(),
+            .map_or_default(|name| name.text.clone()),
         flags: flag_bits(
             &source.flags,
             user_flags,
@@ -139,8 +138,7 @@ pub fn lower_script(
             .states
             .iter()
             .find(|state| state.auto)
-            .map(|state| state.name.clone())
-            .unwrap_or_default(),
+            .map_or_default(|state| state.name.clone()),
         variables: Vec::new(),
         external_slots: Vec::new(),
         properties: Vec::new(),

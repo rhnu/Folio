@@ -113,8 +113,7 @@ fn evaluate(node: &SyntaxNode) -> f64 {
         .children_with_tokens()
         .filter_map(rowan::NodeOrToken::into_token)
         .find(|token| !token.kind().is_trivia())
-        .map(|token| token.text().to_string())
-        .unwrap_or_default();
+        .map_or_default(|token| token.text().to_string());
     match node.kind() {
         SyntaxKind::LiteralExpr => node.text().to_string().trim().parse().unwrap(),
         SyntaxKind::UnaryExpr => -evaluate(&children[0]),

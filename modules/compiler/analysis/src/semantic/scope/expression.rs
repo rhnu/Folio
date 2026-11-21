@@ -136,8 +136,7 @@ impl Scope<'_> {
             let operator = node
                 .children_with_tokens()
                 .find_map(rowan::NodeOrToken::into_token)
-                .map(|token| token.text().to_string())
-                .unwrap_or_default();
+                .map_or_default(|token| token.text().to_string());
             let child = direct_expression(node)?;
             let mut operand = self.expr(&child);
             let ty = match operator.as_str() {
@@ -186,8 +185,7 @@ impl Scope<'_> {
                 .children_with_tokens()
                 .filter_map(rowan::NodeOrToken::into_token)
                 .find(|token| !matches!(token.kind(), SyntaxKind::Whitespace | SyntaxKind::Comment))
-                .map(|token| token.text().to_string())
-                .unwrap_or_default();
+                .map_or_default(|token| token.text().to_string());
             if operator.eq_ignore_ascii_case("as") {
                 let right = node
                     .children()

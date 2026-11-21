@@ -531,7 +531,7 @@ fn accessor_parameters_belong_to_their_property_only() {
                 owner: Box::new(accessor.clone()),
                 name: parameter_name.into(),
             },
-            ty: ty.clone(),
+            ty,
             span: at(),
         });
         source.bodies.push(Body {

@@ -414,7 +414,7 @@ fn node_symbol(node: &SyntaxNode, script: &Script) -> Option<DocumentSymbol> {
     if member.is_some_and(|item| matches!(item.kind, MemberKind::Function { global: true, .. })) {
         kind = 12;
     }
-    let detail = member.map(signature).unwrap_or_default();
+    let detail = member.map_or_default(signature);
     let children =
         if node.kind() == SyntaxKind::StateDecl || node.kind() == SyntaxKind::PropertyDecl {
             node.descendants()

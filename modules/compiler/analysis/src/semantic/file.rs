@@ -60,18 +60,18 @@ pub(super) fn analyze_file(
             Symbol::PropertyAccessor {
                 script: script.name.clone(),
                 property,
-                name: name.clone(),
+                name,
             }
         } else if let Some(state) = &state {
             Symbol::StateMember {
                 script: script.name.clone(),
                 state: state.clone(),
-                name: name.clone(),
+                name,
             }
         } else {
             Symbol::Member {
                 script: script.name.clone(),
-                name: name.clone(),
+                name,
             }
         };
         let mut scope = Scope {
@@ -93,8 +93,7 @@ pub(super) fn analyze_file(
         let statements = node
             .children()
             .find(|child| child.kind() == SyntaxKind::Block)
-            .map(|block| scope.block(&block))
-            .unwrap_or_default();
+            .map_or_default(|block| scope.block(&block));
         if scope.interrupted || cancelled() {
             return Err(AnalysisCancelled);
         }
@@ -159,23 +158,21 @@ fn accessor_member(
         Type::Void
     };
     let actual = folio_papyrus::FunctionAst::cast(node.clone());
-    let parameters: Vec<(String, Type, ParameterDefault)> = actual
-        .map(|ast| {
-            ast.parameters()
-                .into_iter()
-                .map(|parameter| {
-                    (
-                        parameter.name,
-                        Type::from_spelling(&parameter.ty),
-                        parameter
-                            .default
-                            .clone()
-                            .map_or(ParameterDefault::Required, ParameterDefault::Literal),
-                    )
-                })
-                .collect()
-        })
-        .unwrap_or_default();
+    let parameters: Vec<(String, Type, ParameterDefault)> = actual.map_or_default(|ast| {
+        ast.parameters()
+            .into_iter()
+            .map(|parameter| {
+                (
+                    parameter.name,
+                    Type::from_spelling(&parameter.ty),
+                    parameter
+                        .default
+                        .clone()
+                        .map_or(ParameterDefault::Required, ParameterDefault::Literal),
+                )
+            })
+            .collect()
+    });
     MemberInfo {
         name: name.to_owned(),
         ty,

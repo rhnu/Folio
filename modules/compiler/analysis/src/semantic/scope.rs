@@ -131,8 +131,7 @@ impl Scope<'_> {
                 let body = node
                     .children()
                     .find(|child| child.kind() == SyntaxKind::Block)
-                    .map(|block| self.block(&block))
-                    .unwrap_or_default();
+                    .map_or_default(|block| self.block(&block));
                 Some(Statement::While {
                     span: span(self.file, &node),
                     condition,
@@ -237,8 +236,7 @@ impl Scope<'_> {
         let then_branch = node
             .children()
             .find(|child| child.kind() == SyntaxKind::Block)
-            .map(|block| self.block(&block))
-            .unwrap_or_default();
+            .map_or_default(|block| self.block(&block));
         let mut else_if = Vec::new();
         let mut else_branch = Vec::new();
         for clause in node.children().filter(|child| {
@@ -255,8 +253,7 @@ impl Scope<'_> {
                 let branch = clause
                     .children()
                     .find(|child| child.kind() == SyntaxKind::Block)
-                    .map(|block| self.block(&block))
-                    .unwrap_or_default();
+                    .map_or_default(|block| self.block(&block));
                 else_if.push((test, branch));
                 continue;
             }

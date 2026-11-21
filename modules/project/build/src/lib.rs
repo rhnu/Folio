@@ -490,18 +490,15 @@ impl ProjectAnalysis {
         let mut issues = Vec::new();
         for source in self.active.values() {
             source_map.insert(source.file, source.source.clone());
-            let headers = analysis
-                .declarations(source.file)
-                .map(|items| {
-                    items
-                        .iter()
-                        .filter_map(|declaration| match declaration {
-                            Declaration::Script { name, .. } => Some(name.clone()),
-                            _ => None,
-                        })
-                        .collect::<Vec<_>>()
-                })
-                .unwrap_or_default();
+            let headers = analysis.declarations(source.file).map_or_default(|items| {
+                items
+                    .iter()
+                    .filter_map(|declaration| match declaration {
+                        Declaration::Script { name, .. } => Some(name.clone()),
+                        _ => None,
+                    })
+                    .collect::<Vec<_>>()
+            });
             match headers.as_slice() {
                 [] => issues.push(SourceIssue::MissingScriptHeader { file: source.file }),
                 [declared] if !declared.eq_ignore_ascii_case(&source.source.script_candidate) => {
